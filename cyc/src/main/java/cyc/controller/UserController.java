@@ -1,39 +1,49 @@
 package cyc.controller;
 
-
 import cyc.dataModel.User;
 import cyc.services.UserService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-@RestController("user")
-@Slf4j
+@RestController
+@RequestMapping("/users")
 public class UserController {
-
 
     @Autowired
     private UserService userService;
 
-    @PostMapping("add")
-    public ResponseEntity<String> addUser(@RequestBody User user) {
-        userService.addUser(user);
-        return ResponseEntity.ok("User added");
+    @PostMapping
+    public ResponseEntity<Map<String, Object>> createUser(@RequestBody User user) {
+        try {
+            userService.createUser(user);
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "User created successfully");
+            response.put("user", user);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (IllegalArgumentException ex) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", ex.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
     }
 
-    @GetMapping("get/user/{userId}")
-    public User getUserByUserId(@PathVariable String userId) {
-
-        return  userService.getUserByUserId(userId);
+    @GetMapping
+    public ResponseEntity<List<User>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    @PostMapping("login")
-    public ResponseEntity<String> addUser(@RequestBody U) {
-        userService.addUser(user);
-        return ResponseEntity.ok("User added");
+    @GetMapping("/{userId}")
+    public ResponseEntity<User> getUserById(@PathVariable String userId) {
+        User user = userService.getUserByUserId(userId);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(user);
     }
-
 }

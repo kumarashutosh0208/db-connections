@@ -1,17 +1,24 @@
 package cyc.dataModel;
 
-
 import cyc.dtoModel.Address;
-import org.springframework.data.mongodb.core.index.Indexed;
+import cyc.dtoModel.BankAccDetails;
+import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
-@Document(collation = "user")
-public class User extends AuditEntity{
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+
+
+@Document(collection = "user")
+public class User {
 
     private static final long serialVersionUID = 1L;
-    @Indexed
+
     private String id;
     private String name;
     private String email;
@@ -22,6 +29,4 @@ public class User extends AuditEntity{
     private String dob;
     private List<BankAccDetails> bankAcctDetails;
     private String status;
-
-
 }
